@@ -1,0 +1,25 @@
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    position: relative;
+    min-height: 100%;
+  }
+  
+  code {
+    font-size: 80%;
+  }
+  
+  .data-table {
+    margin-bottom: 6rem;
+    margin-top: 1rem;
+  }
+  .reset { 
+    margin-bottom: 20px;
+  }
+
+  .root {margin-top: 30px;}
+
+  .form-group {
+    padding-left: 20px;
+    padding-right: 20px;
+  }

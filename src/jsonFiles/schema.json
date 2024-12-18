@@ -1,0 +1,630 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://nationalhighways.co.uk/evo/env-schema",
+  "title": "Azure Environment Service Catalogue",
+  "description": "Request to either create or update a service.",
+  "type": "object",
+  "oneOf": [
+    {
+      "title": "New Service",
+      "description": "Use this form to create a new service.",
+      "additionalProperties": false,
+      "required": [
+        "service_name",
+        "method",
+        "skip_automation",
+        "tags"
+      ],
+      "properties": {
+        "service_name": {
+          "type": "string",
+          "title": "Service Name",
+          "description": "The name of the service."
+        },
+        "method": {
+          "$ref": "#/$defs/method"
+        },
+        "skip_automation": {
+          "$ref": "#/$defs/skip_automation"
+        },
+        "tags": {
+          "description": "New service level tags are required for a new service.",
+          "required": [
+            "PO Number",
+            "BSO",
+            "PIN",
+            "Directorate",
+            "Main Contact"
+          ],
+          "$ref": "#/$defs/tags"
+        },
+        "components": {
+          "$ref": "#/$defs/components"
+        }
+      }
+    },
+    {
+      "title": "Existing Service",
+      "description": "Update an existing service.",
+      "required": [
+        "service_id",
+        "method",
+        "skip_automation"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "service_id": {
+          "type": "string",
+          "title": "Service ID",
+          "description": "The ID of the service.",
+          "maxLength": 3,
+          "minLength": 3
+        },
+        "method": {
+          "$ref": "#/$defs/method"
+        },
+        "skip_automation": {
+          "$ref": "#/$defs/skip_automation"
+        },
+        "tags": {
+          "description": "Only enter the tags you want to update the vlaues of the existing service level tags.",
+          "$ref": "#/$defs/tags"
+        },
+        "components": {
+          "$ref": "#/$defs/components"
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "components": {
+      "title": "Components",
+      "description": "The components of the service.",
+      "type": "array",
+      "items": {
+        "anyOf": [
+          {
+            "title": "Hub",
+            "required": [
+              "name",
+              "action",
+              "env_class",
+              "region",
+              "tenant",
+              "data"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Component Name",
+                "default": "hub",
+                "description": "The name of the component."
+              },
+              "action": {
+                "default": "CREATE",
+                "$ref": "#/$defs/actions"
+              },
+              "env_class": {
+                "$ref": "#/$defs/environments"
+              },
+              "region": {
+                "$ref": "#/$defs/regions"
+              },
+              "tenant": {
+                "$ref": "#/$defs/tenants"
+              },
+              "data": {
+                "$ref": "#/$defs/data"
+              },
+              "tags": {
+                "title": "Component Level Tags",
+                "description": "Only required if you need to override the service level tags for this service.",
+                "$ref": "#/$defs/tags"
+              },
+              "config": {
+                "type": "object",
+                "title": "Configuration",
+                "properties": {
+                  "address_space": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "title": "Value",
+                        "description": "The value of the configuration."
+                      },
+                      "action": {
+                        "default": "CREATE",
+                        "$ref": "#/$defs/actions"
+                      }
+                    }
+                  },
+                  "readers": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "array",
+                        "title": "Email addresses",
+                        "items": {
+                          "type": "string",
+                          "format": "email"
+                        }
+                      },
+                      "action": {
+                        "default": "CREATE",
+                        "$ref": "#/$defs/actions"
+                      }
+                    }
+                  },
+                  "contributors": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "array",
+                        "title": "Email addresses",
+                        "items": {
+                          "type": "string",
+                          "format": "email"
+                        }
+                      },
+                      "action": {
+                        "default": "CREATE",
+                        "$ref": "#/$defs/actions"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "title": "Spoke",
+            "required": [
+              "name",
+              "action",
+              "env_class",
+              "region",
+              "tenant",
+              "data"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Component Name",
+                "default": "spoke",
+                "description": "The name of the component."
+              },
+              "action": {
+                "default": "CREATE",
+                "$ref": "#/$defs/actions"
+              },
+              "env_class": {
+                "$ref": "#/$defs/environments"
+              },
+              "region": {
+                "$ref": "#/$defs/regions"
+              },
+              "tenant": {
+                "$ref": "#/$defs/tenants"
+              },
+              "data": {
+                "$ref": "#/$defs/data"
+              },
+              "tags": {
+                "title": "Component Level Tags",
+                "description": "Only required if you need to override the service level tags for this service.",
+                "$ref": "#/$defs/tags"
+              },
+              "config": {
+                "type": "object",
+                "title": "Configuration",
+                "properties": {
+                  "address_space": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "title": "Value",
+                        "description": "The value of the configuration."
+                      },
+                      "action": {
+                        "default": "CREATE",
+                        "$ref": "#/$defs/actions"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "title": "Bastion",
+            "required": [
+              "name",
+              "action",
+              "env_class",
+              "region",
+              "tenant",
+              "data"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Component Name",
+                "default": "bastion",
+                "description": "The name of the component."
+              },
+              "action": {
+                "default": "CREATE",
+                "$ref": "#/$defs/actions"
+              },
+              "env_class": {
+                "$ref": "#/$defs/environments"
+              },
+              "region": {
+                "$ref": "#/$defs/regions"
+              },
+              "tenant": {
+                "$ref": "#/$defs/tenants"
+              },
+              "data": {
+                "$ref": "#/$defs/data"
+              },
+              "tags": {
+                "title": "Component Level Tags",
+                "description": "Only required if you need to override the service level tags for this service.",
+                "$ref": "#/$defs/tags"
+              },
+              "config": {
+                "type": "object",
+                "title": "Configuration",
+                "properties": {
+                  "target_id": {
+                    "type": "object",
+                    "title": "Target ID",
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "title": "Target ID",
+                        "default": "01",
+                        "description": "The ID of the hub to deploy the bastion to."
+                      },
+                      "action": {
+                        "default": "CREATE",
+                        "$ref": "#/$defs/actions"
+                      }
+                    }
+                  },
+                  "address_space": {
+                    "type": "object",
+                    "title": "Address space",
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "title": "Address space",
+                        "default": "01",
+                        "description": "the address space to create the bastion subnet."
+                      },
+                      "action": {
+                        "default": "CREATE",
+                        "$ref": "#/$defs/actions"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "title": "Archive Service",
+            "required": [
+              "name",
+              "action",
+              "env_class",
+              "region",
+              "tenant",
+              "data"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Component Name",
+                "default": "archiveservice",
+                "description": "The name of the component."
+              },
+              "action": {
+                "default": "CREATE",
+                "$ref": "#/$defs/actions"
+              },
+              "env_class": {
+                "$ref": "#/$defs/environments"
+              },
+              "region": {
+                "$ref": "#/$defs/regions"
+              },
+              "tenant": {
+                "$ref": "#/$defs/tenants"
+              },
+              "data": {
+                "$ref": "#/$defs/data"
+              },
+              "tags": {
+                "title": "Component Level Tags",
+                "description": "Only required if you need to override the service level tags for this service.",
+                "$ref": "#/$defs/tags"
+              },
+              "config": {
+                "type": "object",
+                "title": "Configuration",
+                "properties": {
+                  "target_id": {
+                    "type": "object",
+                    "title": "Target ID",
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "title": "Target ID",
+                        "default": "01",
+                        "description": "The ID of the spoke to deploy the archive service to."
+                      },
+                      "action": {
+                        "default": "CREATE",
+                        "$ref": "#/$defs/actions"
+                      }
+                    }
+                  },
+                  "address_space": {
+                    "type": "object",
+                    "title": "Address space",
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "title": "Address space",
+                        "default": "01",
+                        "description": "the address space to create the bastion subnet."
+                      },
+                      "action": {
+                        "default": "CREATE",
+                        "$ref": "#/$defs/actions"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "title": "adotoolchain",
+            "required": [
+              "name",
+              "action",
+              "env_class",
+              "region",
+              "tenant",
+              "data"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Component Name",
+                "default": "adotoolchain",
+                "description": "The name of the component."
+              },
+              "action": {
+                "default": "CREATE",
+                "$ref": "#/$defs/actions"
+              },
+              "env_class": {
+                "$ref": "#/$defs/environments",
+                "default": "srv"
+              },
+              "region": {
+                "$ref": "#/$defs/regions",
+                "default": "global"
+              },
+              "tenant": {
+                "$ref": "#/$defs/tenants",
+                "default": "it"
+              },
+              "data": {
+                "$ref": "#/$defs/data"
+              },
+              "config": {
+                "type": "object",
+                "title": "Configuration",
+                "properties": {
+                  "org": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "title": "Organisation",
+                        "description": "The hub to deploy the transfer hub to.",
+                        "enum": [
+                          "clouda&e",
+                          "highwaysengland"
+                        ]
+                      },
+                      "action": {
+                        "default": "CREATE",
+                        "$ref": "#/$defs/actions"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "title": "tansferhub",
+            "required": [
+              "name",
+              "action",
+              "env_class",
+              "region",
+              "tenant",
+              "data"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Component Name",
+                "default": "tansferhub",
+                "description": "The name of the component."
+              },
+              "action": {
+                "default": "CREATE",
+                "$ref": "#/$defs/actions"
+              },
+              "env_class": {
+                "$ref": "#/$defs/environments"
+              },
+              "region": {
+                "$ref": "#/$defs/regions"
+              },
+              "tenant": {
+                "$ref": "#/$defs/tenants"
+              },
+              "data": {
+                "$ref": "#/$defs/data"
+              },
+              "tags": {
+                "title": "Component Level Tags",
+                "description": "Only required if you need to override the service level tags for this service.",
+                "$ref": "#/$defs/tags"
+              },
+              "config": {
+                "type": "object",
+                "title": "Configuration",
+                "properties": {
+                  "target_id": {
+                    "type": "object",
+                    "properties": {
+                      "value": {
+                        "type": "string",
+                        "title": "Value",
+                        "default": "01",
+                        "description": "The hub to deploy the transfer hub to."
+                      },
+                      "action": {
+                        "default": "CREATE",
+                        "$ref": "#/$defs/actions"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    "data": {
+      "type": "object",
+      "title": "Data",
+      "description": "The data of the component.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "default": "01",
+          "title": "Component ID",
+          "description": "The ID of the component.",
+          "minLength": 1,
+          "maxLength": 3
+        }
+      }
+    },
+    "skip_automation": {
+      "type": "boolean",
+      "default": true,
+      "title": "Skip Automation",
+      "description": "Skip automation for this request."
+    },
+    "method": {
+      "type": "string",
+      "title": "Method",
+      "default": "incremental",
+      "description": "The method of the request.",
+      "enum": [
+        "incremental",
+        "full"
+      ]
+    },
+    "tags": {
+      "type": "object",
+      "title": "Service Level Tags",
+      "properties": {
+        "PO Number": {
+          "type": "string",
+          "description": "The PO number for the service.",
+          "format": "number"
+        },
+        "BSO": {
+          "type": "string",
+          "description": "The business service owner email address for the service.",
+          "format": "email"
+        },
+        "Main Contact": {
+          "type": "string",
+          "description": "The main technical contact email addressfor the service.",
+          "format": "email"
+        },
+        "PIN": {
+          "type": "string",
+          "description": "The business case reference for the service.",
+          "format": "number"
+        },
+        "Directorate": {
+          "type": "string",
+          "description": "The directorate for the service."
+        }
+      }
+    },
+    "environments": {
+      "type": "string",
+      "title": "Environment Class",
+      "description": "The environment class of the component.",
+      "enum": [
+        "dev",
+        "uat",
+        "prd"
+      ]
+    },
+    "regions": {
+      "type": "string",
+      "title": "Region",
+      "description": "The region of the component.",
+      "enum": [
+        "uks",
+        "ukw"
+      ]
+    },
+    "tenants": {
+      "type": "string",
+      "title": "Tenant",
+      "description": "The tenant of the component.",
+      "enum": [
+        "it",
+        "ot"
+      ]
+    },
+    "actions": {
+      "type": "string",
+      "title": "Component Action",
+      "description": "The action that should be taken.",
+      "enum": [
+        "REMOVE",
+        "CREATE",
+        "UPDATE"
+      ]
+    },
+    "zones": {
+      "type": "string",
+      "enum": [
+        "Transiant",
+        "Operational",
+        "Innovation"
+      ]
+    }
+  }
+}
